@@ -2,24 +2,43 @@
 <html>
 <head>
     <title>Offline Container Scanner</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <!-- PWA Manifest -->
+   <link rel="manifest" href="manifest.json">
 </head>
 
 <body>
 
     <h2>Container QR Scanner</h2>
+
+    <button id="syncButton">
+        Sync Container Data
+    </button>
+
+   
+    <p id="syncStatus"></p>
+
     
-    <video id="video" width="300" height="220" autoplay></video>
+    <video
+        id="video"
+        width="300"
+        height="220"
+        autoplay
+        playsinline>
+    </video>
 
-    <p id="scanResult">Scan a QR code...</p>
+    <p id="scanResult">
+    </p>
 
-   <div id="result">
-    Container details will appear here.
-</div>
+    <div id="result">
+    </div>
 
-<script src="jsQR.js"></script>
-<script src="app.js"></script>
+    <script src="jsQR.js"></script>
 
+    <script src="app.js"></script>
 
 </body>
 </html>
