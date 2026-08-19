@@ -1,6 +1,5 @@
-// Offline Container Data - POC
 const containers = {
-    "a07NS00002SN0QMYA1": {
+    "a07NS00002SNOQMYA1": {
         containerName: "Container 002",
         containerId: "CON002",
         wasteType: "Non-Wet Waste"
@@ -15,27 +14,19 @@ const canvas = document.createElement('canvas');
 const context = canvas.getContext('2d');
 
 navigator.mediaDevices.getUserMedia({
-    video: {
-        facingMode: 'environment'
-    }
+    video: { facingMode: 'environment' }
 })
 .then(stream => {
-
     video.srcObject = stream;
     video.setAttribute('playsinline', true);
     video.play();
 
     requestAnimationFrame(scanQRCode);
-
 })
 .catch(error => {
-
-    console.error('Camera Error:', error);
-
     scanResult.innerText =
         'Camera Error: ' + error.name + ' - ' + error.message;
 });
-
 
 function scanQRCode() {
 
@@ -64,92 +55,62 @@ function scanQRCode() {
             const code = jsQR(
                 imageData.data,
                 imageData.width,
-                imageData.height,
-                {
-                    inversionAttempts: 'dontInvert'
-                }
+                imageData.height
             );
 
             if (code) {
 
-                console.log('QR Found:', code.data);
+                // QR value clean cheyyadam
+                const scannedValue = code.data.trim();
 
-                const scannedUrl = code.data;
+                console.log('Scanned QR:', scannedValue);
 
-                try {
+                // URL nunchi c__recordId direct ga extract chestundi
+                const match =
+                    scannedValue.match(/c__recordId=([a-zA-Z0-9]+)/);
 
-                    // Read scanned QR URL
-                    const url = new URL(scannedUrl);
+                if (match && match[1]) {
 
-                    // Get Salesforce Record Id from URL
-                    const recordId =
-                        url.searchParams.get('c__recordId');
+                    const recordId = match[1];
 
                     console.log('Record Id:', recordId);
 
-                    if (recordId) {
+                    const container = containers[recordId];
 
-                        // Search local/offline data
-                        const container = containers[recordId];
+                    if (container) {
 
-                        if (container) {
+                        scanResult.innerText =
+                            'QR Scanned Successfully';
 
-                            scanResult.innerText =
-                                'QR Scanned Successfully';
-
-                            resultDiv.innerHTML = `
-                                <h2>Container Details</h2>
-
-                                <p>
-                                    <b>Container Name:</b>
-                                    ${container.containerName}
-                                </p>
-
-                                <p>
-                                    <b>Container Id:</b>
-                                    ${container.containerId}
-                                </p>
-
-                                <p>
-                                    <b>Waste Type:</b>
-                                    ${container.wasteType}
-                                </p>
-                            `;
-
-                        } else {
-
-                            scanResult.innerText =
-                                'QR Scanned Successfully';
-
-                            resultDiv.innerHTML = `
-                                <p>
-                                    Container data not available offline.
-                                </p>
-                            `;
-                        }
+                        resultDiv.innerHTML = `
+                            <h2>Container Details</h2>
+                            <p><b>Container Name:</b> ${container.containerName}</p>
+                            <p><b>Container Id:</b> ${container.containerId}</p>
+                            <p><b>Waste Type:</b> ${container.wasteType}</p>
+                        `;
 
                     } else {
 
                         scanResult.innerText =
-                            'Record Id not found in QR';
+                            'QR Scanned Successfully';
+
+                        resultDiv.innerHTML = `
+                            <p>Container data not available offline.</p>
+                            <p>Record Id: ${recordId}</p>
+                        `;
                     }
 
-                } catch (error) {
-
-                    console.error('Invalid QR URL:', error);
+                } else {
 
                     scanResult.innerText =
-                        'Invalid QR URL';
+                        'Record Id not found in QR';
+
+                    resultDiv.innerHTML =
+                        `<p>${scannedValue}</p>`;
                 }
 
-                // Stop after successful QR detection
                 return;
             }
-
-        } else {
-
-            scanResult.innerText =
-                'jsQR library not loaded';
         }
     }
 
