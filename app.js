@@ -1,3 +1,17 @@
+const containers = {
+    "a07RECORDID003": {
+        containerName: "Container 003",
+        containerId: "CON003",
+        wasteType: "Plastic Waste"
+    },
+
+    "a07RECORDID002": {
+        containerName: "Container 002",
+        containerId: "CON002",
+        wasteType: "Wet Waste"
+    }
+};
+
 const video = document.getElementById('video');
 const scanResult = document.getElementById('scanResult');
 const resultDiv = document.getElementById('result');
@@ -70,13 +84,30 @@ function scanQRCode() {
 
                     if (recordId) {
 
-                        scanResult.innerText =
-                            'Record Id: ' + recordId;
+                        console.log('Record Id:', recordId);
 
-                        console.log(
-                            'Record Id:',
-                            recordId
-                        );
+                        const container = containers[recordId];
+
+                        if (container) {
+
+                            scanResult.innerText =
+                                'QR Scanned Successfully';
+
+                            resultDiv.innerHTML = `
+                                <h3>Container Details</h3>
+                                <p><b>Container Name:</b> ${container.containerName}</p>
+                                <p><b>Container Id:</b> ${container.containerId}</p>
+                                <p><b>Waste Type:</b> ${container.wasteType}</p>
+                            `;
+
+                        } else {
+
+                            scanResult.innerText =
+                                'QR Scanned Successfully';
+
+                            resultDiv.innerHTML =
+                                '<p>Container data not available offline.</p>';
+                        }
 
                     } else {
 
