@@ -12,30 +12,20 @@ navigator.mediaDevices.getUserMedia({
     video.srcObject = stream;
     video.setAttribute('playsinline', true);
     video.play();
-
     requestAnimationFrame(scanQRCode);
 })
 .catch(error => {
-    console.error('Camera Error:', error);
-
     scanResult.innerText =
         'Camera Error: ' + error.name + ' - ' + error.message;
 });
 
 function scanQRCode() {
-
     if (video.readyState === video.HAVE_ENOUGH_DATA) {
 
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
 
-        context.drawImage(
-            video,
-            0,
-            0,
-            canvas.width,
-            canvas.height
-        );
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
         const imageData = context.getImageData(
             0,
@@ -44,20 +34,25 @@ function scanQRCode() {
             canvas.height
         );
 
-        const code = jsQR(
-            imageData.data,
-            imageData.width,
-            imageData.height
-        );
+        if (typeof jsQR !== 'undefined') {
+            const code = jsQR(
+                imageData.data,
+                imageData.width,
+                imageData.height,
+                {
+                    inversionAttempts: 'dontInvert'
+                }
+            );
 
-        if (code) {
+            if (code) {
+                scanResult.innerText = 'Scanned QR: ' + code.data;
 
-            console.log('QR Found:', code.data);
+                console.log('QR Found:', code.data);
 
-            scanResult.innerText =
-                'Scanned QR: ' + code.data;
-
-            return;
+                return;
+            }
+        } else {
+            scanResult.innerText = 'jsQR library not loaded';
         }
     }
 
