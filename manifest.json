@@ -1,0 +1,6 @@
+{
+  "name": "Offline Container Scanner",
+  "short_name": "Container Scanner",
+  "start_url": "./index.html",
+  "display": "standalone"
+}
