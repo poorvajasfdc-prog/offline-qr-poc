@@ -60,12 +60,10 @@ function scanQRCode() {
 
             if (code) {
 
-                // QR value clean cheyyadam
                 const scannedValue = code.data.trim();
 
                 console.log('Scanned QR:', scannedValue);
 
-                // URL nunchi c__recordId direct ga extract chestundi
                 const match =
                     scannedValue.match(/c__recordId=([a-zA-Z0-9]+)/);
 
@@ -73,7 +71,7 @@ function scanQRCode() {
 
                     const recordId = match[1];
 
-                    console.log('Record Id:', recordId);
+                    console.log('Scanned Record Id:', recordId);
 
                     const container = containers[recordId];
 
@@ -84,9 +82,21 @@ function scanQRCode() {
 
                         resultDiv.innerHTML = `
                             <h2>Container Details</h2>
-                            <p><b>Container Name:</b> ${container.containerName}</p>
-                            <p><b>Container Id:</b> ${container.containerId}</p>
-                            <p><b>Waste Type:</b> ${container.wasteType}</p>
+
+                            <p>
+                                <b>Container Name:</b>
+                                ${container.containerName}
+                            </p>
+
+                            <p>
+                                <b>Container Id:</b>
+                                ${container.containerId}
+                            </p>
+
+                            <p>
+                                <b>Waste Type:</b>
+                                ${container.wasteType}
+                            </p>
                         `;
 
                     } else {
@@ -96,7 +106,16 @@ function scanQRCode() {
 
                         resultDiv.innerHTML = `
                             <p>Container data not available offline.</p>
-                            <p>Record Id: ${recordId}</p>
+
+                            <p>
+                                <b>Scanned Record Id:</b>
+                                ${recordId}
+                            </p>
+
+                            <p>
+                                <b>Expected Record Id:</b>
+                                a07NS00002SNOQMYA1
+                            </p>
                         `;
                     }
 
@@ -105,8 +124,10 @@ function scanQRCode() {
                     scanResult.innerText =
                         'Record Id not found in QR';
 
-                    resultDiv.innerHTML =
-                        `<p>${scannedValue}</p>`;
+                    resultDiv.innerHTML = `
+                        <p><b>Scanned QR:</b></p>
+                        <p>${scannedValue}</p>
+                    `;
                 }
 
                 return;
