@@ -17,7 +17,9 @@ navigator.mediaDevices.getUserMedia({
 })
 .catch(error => {
     console.error('Camera Error:', error);
-    scanResult.innerText = 'Unable to access camera';
+
+    scanResult.innerText =
+        'Camera Error: ' + error.name + ' - ' + error.message;
 });
 
 function scanQRCode() {
