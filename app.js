@@ -12,20 +12,30 @@ navigator.mediaDevices.getUserMedia({
     video.srcObject = stream;
     video.setAttribute('playsinline', true);
     video.play();
+
     requestAnimationFrame(scanQRCode);
 })
 .catch(error => {
+    console.error('Camera Error:', error);
+
     scanResult.innerText =
         'Camera Error: ' + error.name + ' - ' + error.message;
 });
 
 function scanQRCode() {
+
     if (video.readyState === video.HAVE_ENOUGH_DATA) {
 
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
 
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        context.drawImage(
+            video,
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
 
         const imageData = context.getImageData(
             0,
@@ -35,6 +45,7 @@ function scanQRCode() {
         );
 
         if (typeof jsQR !== 'undefined') {
+
             const code = jsQR(
                 imageData.data,
                 imageData.width,
@@ -45,14 +56,52 @@ function scanQRCode() {
             );
 
             if (code) {
-                scanResult.innerText = 'Scanned QR: ' + code.data;
 
                 console.log('QR Found:', code.data);
 
+                const scannedUrl = code.data;
+
+                try {
+
+                    const url = new URL(scannedUrl);
+
+                    const recordId =
+                        url.searchParams.get('c__recordId');
+
+                    if (recordId) {
+
+                        scanResult.innerText =
+                            'Record Id: ' + recordId;
+
+                        console.log(
+                            'Record Id:',
+                            recordId
+                        );
+
+                    } else {
+
+                        scanResult.innerText =
+                            'Record Id not found in QR';
+                    }
+
+                } catch (error) {
+
+                    console.error(
+                        'Invalid QR URL:',
+                        error
+                    );
+
+                    scanResult.innerText =
+                        'Invalid QR URL';
+                }
+
                 return;
             }
+
         } else {
-            scanResult.innerText = 'jsQR library not loaded';
+
+            scanResult.innerText =
+                'jsQR library not loaded';
         }
     }
 
