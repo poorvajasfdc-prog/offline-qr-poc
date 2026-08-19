@@ -1,4 +1,5 @@
-const CACHE_NAME = 'container-scanner-v1';
+// const CACHE_NAME = 'container-scanner-v1';
+const CACHE_NAME = 'container-scanner-v2';
 
 const FILES_TO_CACHE = [
     './',
