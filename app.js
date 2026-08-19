@@ -1,14 +1,9 @@
+// Offline Container Data - POC
 const containers = {
-    "a07RECORDID003": {
-        containerName: "Container 003",
-        containerId: "CON003",
-        wasteType: "Plastic Waste"
-    },
-
-    "a07RECORDID002": {
+    "a07NS00002SN0QMYA1": {
         containerName: "Container 002",
         containerId: "CON002",
-        wasteType: "Wet Waste"
+        wasteType: "Non-Wet Waste"
     }
 };
 
@@ -20,21 +15,27 @@ const canvas = document.createElement('canvas');
 const context = canvas.getContext('2d');
 
 navigator.mediaDevices.getUserMedia({
-    video: { facingMode: 'environment' }
+    video: {
+        facingMode: 'environment'
+    }
 })
 .then(stream => {
+
     video.srcObject = stream;
     video.setAttribute('playsinline', true);
     video.play();
 
     requestAnimationFrame(scanQRCode);
+
 })
 .catch(error => {
+
     console.error('Camera Error:', error);
 
     scanResult.innerText =
         'Camera Error: ' + error.name + ' - ' + error.message;
 });
+
 
 function scanQRCode() {
 
@@ -77,15 +78,18 @@ function scanQRCode() {
 
                 try {
 
+                    // Read scanned QR URL
                     const url = new URL(scannedUrl);
 
+                    // Get Salesforce Record Id from URL
                     const recordId =
                         url.searchParams.get('c__recordId');
 
+                    console.log('Record Id:', recordId);
+
                     if (recordId) {
 
-                        console.log('Record Id:', recordId);
-
+                        // Search local/offline data
                         const container = containers[recordId];
 
                         if (container) {
@@ -94,10 +98,22 @@ function scanQRCode() {
                                 'QR Scanned Successfully';
 
                             resultDiv.innerHTML = `
-                                <h3>Container Details</h3>
-                                <p><b>Container Name:</b> ${container.containerName}</p>
-                                <p><b>Container Id:</b> ${container.containerId}</p>
-                                <p><b>Waste Type:</b> ${container.wasteType}</p>
+                                <h2>Container Details</h2>
+
+                                <p>
+                                    <b>Container Name:</b>
+                                    ${container.containerName}
+                                </p>
+
+                                <p>
+                                    <b>Container Id:</b>
+                                    ${container.containerId}
+                                </p>
+
+                                <p>
+                                    <b>Waste Type:</b>
+                                    ${container.wasteType}
+                                </p>
                             `;
 
                         } else {
@@ -105,8 +121,11 @@ function scanQRCode() {
                             scanResult.innerText =
                                 'QR Scanned Successfully';
 
-                            resultDiv.innerHTML =
-                                '<p>Container data not available offline.</p>';
+                            resultDiv.innerHTML = `
+                                <p>
+                                    Container data not available offline.
+                                </p>
+                            `;
                         }
 
                     } else {
@@ -117,15 +136,13 @@ function scanQRCode() {
 
                 } catch (error) {
 
-                    console.error(
-                        'Invalid QR URL:',
-                        error
-                    );
+                    console.error('Invalid QR URL:', error);
 
                     scanResult.innerText =
                         'Invalid QR URL';
                 }
 
+                // Stop after successful QR detection
                 return;
             }
 
